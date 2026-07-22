@@ -1,18 +1,19 @@
--- Target: Curated fact table for reporting/dashboard
-CREATE TABLE IF NOT EXISTS telecom_curated.fct_call_summary (
+-- Source: Raw CDR events landed from Pub/Sub into BigQuery staging
+CREATE TABLE IF NOT EXISTS telecom_raw.cdr_events (
     call_id             STRING      NOT NULL,
-    customer_id         STRING      NOT NULL,
+    caller_number       STRING      NOT NULL,
+    receiver_number     STRING      NOT NULL,
+    call_type           STRING      NOT NULL,   -- Voice/SMS/Data
+    call_duration_sec   INT64,
     tower_id            STRING      NOT NULL,
-    call_date           DATE        NOT NULL,
-    call_type           STRING      NOT NULL,
-    network_type        STRING,
-    total_calls         INT64,
-    dropped_calls       INT64,
-    avg_duration_sec    FLOAT64,
-    load_timestamp      TIMESTAMP   NOT NULL DEFAULT CURRENT_TIMESTAMP()
+    call_timestamp      TIMESTAMP   NOT NULL,
+    network_type        STRING,                 -- 4G/5G
+    call_status         STRING      NOT NULL,   -- Completed/Dropped/Failed
+    customer_id         STRING      NOT NULL,
+    ingestion_timestamp TIMESTAMP   DEFAULT CURRENT_TIMESTAMP()
 )
-PARTITION BY call_date
+PARTITION BY DATE(call_timestamp)
 CLUSTER BY tower_id, customer_id
 OPTIONS (
-    description = "Curated daily call summary for dashboards"
+    description = "Raw CDR events ingested via Pub/Sub"
 );

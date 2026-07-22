@@ -4,13 +4,13 @@ CREATE TABLE IF NOT EXISTS telecom_raw.cdr_events (
     caller_number       STRING      NOT NULL,
     receiver_number     STRING      NOT NULL,
     call_type           STRING      NOT NULL,   -- Voice/SMS/Data
-    call_duration_sec   INT64       ,
+    call_duration_sec   INT64,
     tower_id            STRING      NOT NULL,
     call_timestamp      TIMESTAMP   NOT NULL,
-    network_type        STRING      ,           -- 4G/5G
+    network_type        STRING,                 -- 4G/5G
     call_status         STRING      NOT NULL,   -- Completed/Dropped/Failed
     customer_id         STRING      NOT NULL,
-    ingestion_timestamp TIMESTAMP   NOT NULL DEFAULT CURRENT_TIMESTAMP()
+    ingestion_timestamp TIMESTAMP   DEFAULT CURRENT_TIMESTAMP()
 )
 PARTITION BY DATE(call_timestamp)
 CLUSTER BY tower_id, customer_id
